@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Progressie Oefenkamer</title>
+<meta name="description" content="Oefen akkoordprogressies in jazz, pop en klassiek · Practise chord progressions in jazz, pop and classical.">
+<meta name="theme-color" content="#A86A12">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Oefenkamer">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;-webkit-tap-highlight-color:transparent}img{max-width:100%}</style>
+<style>
+/* Layout: lacquered-piano studio — progressie-lijst links, speler rechts, oefenblok eronder. Elk genre kleurt de accenttoon. */
+:root{
+  --bg:#ECEEF2; --surface:#FFFFFF; --sunk:#F5F6F8; --ink:#15171C; --muted:#5B616E; --line:#D6DAE1;
+  --jazz:#A86A12; --pop:#C92A62; --klas:#2C6B5A; --on-acc:#FFFFFF;
+  --bass:#3653C9; --good:#2B8A3E; --bad:#C92A2A;
+  --key-w:#FCFCFD; --key-b:#22252C; --key-edge:#B9BEC8;
+  --f-display:"Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  --acc:var(--jazz);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101217; --surface:#191C23; --sunk:#14171D; --ink:#E9EBEF; --muted:#9CA3B0; --line:#2B303A;
+  --jazz:#E3AA4C; --pop:#F26B9A; --klas:#62B79E; --on-acc:#101217;
+  --bass:#7C93F7; --good:#69DB7C; --bad:#FF8787;
+  --key-w:#D9DCE3; --key-b:#08090B; --key-edge:#5B616E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101217; --surface:#191C23; --sunk:#14171D; --ink:#E9EBEF; --muted:#9CA3B0; --line:#2B303A;
+  --jazz:#E3AA4C; --pop:#F26B9A; --klas:#62B79E; --on-acc:#101217;
+  --bass:#7C93F7; --good:#69DB7C; --bad:#FF8787;
+  --key-w:#D9DCE3; --key-b:#08090B; --key-edge:#5B616E; color-scheme:dark}
+body[data-genre="jazz"]{--acc:var(--jazz)}
+body[data-genre="pop"]{--acc:var(--pop)}
+body[data-genre="klassiek"]{--acc:var(--klas)}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 48px}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3{text-wrap:balance;margin:0}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 24px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.brand h1{font-family:var(--f-display);font-weight:500;font-style:italic;font-size:clamp(2rem,6vw,3.1rem);line-height:1;letter-spacing:-.01em}
+.brand h1 b{font-style:normal;font-weight:700;color:var(--acc);transition:color .3s}
+.brand p{margin:6px 0 0;color:var(--muted);font-size:.9rem}
+.genres{display:flex;gap:4px;background:var(--sunk);border:1px solid var(--line);border-radius:999px;padding:4px}
+.genres button{border:0;background:transparent;padding:8px 18px;border-radius:999px;cursor:pointer;font-weight:600;color:var(--muted)}
+.genres button[aria-selected="true"]{background:var(--acc);color:var(--on-acc)}
+.blurb{color:var(--muted);margin:16px 0 20px;max-width:65ch}
+.hdr-r{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.tools{display:flex;gap:8px;align-items:center}
+.langs{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.langs button{border:0;background:transparent;padding:5px 10px;font-size:.78rem;font-weight:700;letter-spacing:.06em;color:var(--muted);cursor:pointer}
+.langs button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.inst{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.inst svg{width:14px;height:14px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom, 0px));z-index:20;display:flex;gap:12px;align-items:center;
+  background:var(--ink);color:var(--bg);padding:10px 10px 10px 16px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:calc(100% - 32px);font-size:.9rem}
+.toast .play{min-width:0;padding:7px 14px}
+
+/* studio */
+.studio{display:grid;grid-template-columns:260px minmax(0,1fr);gap:20px;align-items:start}
+.progs{display:flex;flex-direction:column;gap:2px}
+.progs .lab{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600;margin:0 0 6px 10px}
+.prog{display:block;width:100%;text-align:left;border:0;background:transparent;border-radius:10px;padding:9px 10px;cursor:pointer}
+.prog:hover{background:var(--sunk)}
+.prog .n{display:block;font-weight:600;font-size:.95rem}
+.prog .r{display:block;font-family:var(--f-display);font-style:italic;color:var(--muted);font-size:.95rem}
+.prog[aria-current="true"]{background:var(--surface);box-shadow:inset 3px 0 0 var(--acc)}
+.prog[aria-current="true"] .r{color:var(--acc)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
+.player{display:flex;flex-direction:column;gap:20px;min-width:0}
+.eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--acc);font-weight:700;margin:0 0 4px}
+.player h2{font-family:var(--f-display);font-weight:600;font-size:clamp(1.5rem,3.5vw,2rem);line-height:1.15}
+.desc{margin:6px 0 0;max-width:65ch;color:var(--muted)}
+.listen{margin:6px 0 0;font-size:.85rem;color:var(--muted)}
+.listen b{color:var(--ink);font-weight:600}
+
+.controls{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;padding:14px;background:var(--sunk);border-radius:12px}
+.play{display:inline-flex;align-items:center;gap:8px;border:0;background:var(--acc);color:var(--on-acc);font-weight:700;padding:10px 20px;border-radius:999px;cursor:pointer;min-width:120px;justify-content:center}
+.play svg{width:14px;height:14px;fill:currentColor}
+.ctl{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted)}
+.ctl select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;color:var(--ink)}
+.ctl input[type=range]{width:110px;accent-color:var(--acc)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink);min-width:3ch}
+.ghost{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.85rem}
+.ghost:hover{border-color:var(--acc)}
+.tog{display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:.85rem;color:var(--muted)}
+.tog input{accent-color:var(--acc);width:16px;height:16px}
+
+.now{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.now div{padding:4px 0}
+.now small{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.now .sym{font-family:var(--f-display);font-style:italic;font-weight:600;font-size:clamp(2.4rem,7vw,3.6rem);line-height:1.05;color:var(--acc);transition:color .3s}
+.now .nx .sym{color:var(--muted);font-size:clamp(1.6rem,4.5vw,2.3rem)}
+.now .rn{font-family:var(--f-display);font-size:1.05rem;color:var(--muted)}
+
+.chords{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.card{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 10px 8px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px;transition:border-color .15s, background .15s}
+.card:hover{border-color:var(--acc)}
+.card .s{font-family:var(--f-display);font-style:italic;font-weight:600;font-size:1.35rem;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .rn{font-family:var(--f-display);color:var(--muted);font-size:.95rem}
+.dots{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.card.on{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.card.on .rn{color:var(--on-acc);opacity:.8}
+.card.on .dots i{background:var(--on-acc);opacity:.35}
+.card.on .dots i.hit{opacity:1}
+
+.kbwrap{overflow-x:auto}
+#kb{display:block;width:100%;min-width:520px;height:auto}
+#kb .w{fill:var(--key-w);stroke:var(--key-edge);stroke-width:1}
+#kb .b{fill:var(--key-b)}
+#kb .up{fill:var(--acc)}
+#kb .lo{fill:var(--bass)}
+#kb text{font-family:var(--f-mono);font-size:8px;fill:var(--muted)}
+.legend{display:flex;gap:16px;font-size:.78rem;color:var(--muted);margin-top:6px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+/* practice */
+.practice{margin-top:28px}
+.phead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.phead h2{font-family:var(--f-display);font-weight:600;font-size:1.7rem}
+.modes{display:flex;gap:4px;background:var(--sunk);border:1px solid var(--line);border-radius:999px;padding:4px}
+.modes button{border:0;background:transparent;padding:6px 14px;border-radius:999px;cursor:pointer;font-weight:600;color:var(--muted);font-size:.88rem}
+.modes button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.score{font-size:.85rem;color:var(--muted)}
+.score b{font-family:var(--f-mono);color:var(--ink);font-weight:500}
+.qtext{font-size:1.05rem;margin:0 0 4px;font-weight:600}
+.qsub{color:var(--muted);margin:0 0 16px;max-width:65ch}
+.qrow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.qrow .slot{border:1px dashed var(--line);border-radius:10px;padding:8px 12px;min-width:76px}
+.qrow .slot .s{font-family:var(--f-display);font-style:italic;font-weight:600;font-size:1.2rem}
+.qrow .slot .rn{font-family:var(--f-display);color:var(--muted);font-size:.9rem;display:block}
+.qrow .slot.ask{border:2px solid var(--acc);border-style:solid}
+.qrow .slot.ask .s{color:var(--acc)}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:8px}
+.opt{border:1px solid var(--line);background:var(--sunk);border-radius:10px;padding:12px 14px;text-align:left;cursor:pointer;font-weight:600}
+.opt.ch{font-family:var(--f-display);font-style:italic;font-size:1.3rem;text-align:center}
+.opt:hover:not(:disabled){border-color:var(--acc)}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface))}
+.opt.no{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--surface))}
+.opt small{display:block;font-family:var(--f-display);font-weight:400;font-style:italic;color:var(--muted);font-size:.9rem}
+.qact{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center}
+.fb{font-weight:600}
+.fb.rv{color:var(--muted)}
+.slot.rev{border:2px solid var(--line)}
+.slot.rev .s{color:var(--muted)}
+.fb.ok{color:var(--good)} .fb.no{color:var(--bad)}
+button.slot{font:inherit;color:inherit;background:var(--surface);text-align:left;cursor:pointer;display:flex;flex-direction:column}
+.slot.hear{background:color-mix(in srgb,var(--acc) 16%,var(--surface))}
+.slot.ok{border:2px solid var(--good)}
+.slot.no{border:2px solid var(--bad)}
+.slot.no .s{text-decoration:line-through;text-decoration-color:var(--bad);color:var(--muted)}
+.slot .fix{font-family:var(--f-display);font-style:italic;font-weight:600;font-size:1.2rem;color:var(--good)}
+.pickers{display:grid;gap:14px;margin-bottom:6px}
+.plab{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600;margin-bottom:6px}
+.roots{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px}
+.quals{display:flex;flex-wrap:wrap;gap:6px}
+.pk{border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:9px 4px;cursor:pointer;font-family:var(--f-display);font-style:italic;font-weight:600;font-size:1.05rem;min-width:0}
+.quals .pk{padding:8px 14px}
+.pk:hover{border-color:var(--acc)}
+.pk.sel{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.play:disabled{opacity:.45;cursor:not-allowed}
+@media (max-width:640px){.roots{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.rprog{display:flex;align-items:center;gap:12px;margin-bottom:14px;font-size:.82rem;color:var(--muted);font-weight:600}
+.rprog .bar{display:flex;gap:4px;flex:1;max-width:320px}
+.rprog .bar i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.rprog .bar i.cur{background:var(--acc)}
+.rprog .bar i.ok{background:var(--good)}
+.rprog .bar i.no{background:var(--bad)}
+.sum .big{font-family:var(--f-display);font-size:clamp(2rem,6vw,2.8rem);margin:2px 0 4px;line-height:1.1}
+.sum .big b{color:var(--acc);font-weight:700}
+.rlist{list-style:none;padding:0;margin:0;display:grid;gap:4px;max-width:620px}
+.rlist li{display:grid;grid-template-columns:24px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;background:var(--sunk)}
+.rlist .mk{font-weight:700}
+.rlist li.ok .mk{color:var(--good)}
+.rlist li.no .mk{color:var(--bad)}
+.rlist li.sk .mk{color:var(--muted)}
+.rprog .bar i.sk{background:var(--muted);opacity:.5}
+.rlist .nm{font-weight:600}
+.rlist .k{font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.ghost.sm{padding:4px 10px;font-size:.8rem}
+@media (max-width:520px){.rlist li{grid-template-columns:24px minmax(0,1fr) auto}.rlist .k{grid-column:2;text-align:left}.rlist .ghost.sm{grid-column:3;grid-row:1 / span 2}}
+.reveal{margin-top:10px;font-size:.9rem;color:var(--muted)}
+.reveal span{font-family:var(--f-display);font-style:italic;color:var(--ink);font-size:1.05rem}
+
+@media (max-width:760px){
+  .studio{grid-template-columns:minmax(0,1fr)}
+  .progs{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px;scrollbar-width:thin}
+  .progs .lab{display:none}
+  .prog{flex:0 0 auto;width:auto;border:1px solid var(--line);background:var(--surface)}
+  .prog[aria-current="true"]{box-shadow:inset 0 -3px 0 var(--acc)}
+  .panel{padding:16px}
+  .hdr-r{width:100%;align-items:stretch}
+  .tools{justify-content:flex-end}
+  .genres{width:100%}
+  .genres button{flex:1;padding:8px 6px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<script>window.APP_SW="./sw.js";</script>
+</head>
+<body>
+
+<header class="wrap top">
+  <div class="brand">
+    <h1 data-i18n-html="brand">Progressie <b>Oefenkamer</b></h1>
+    <p data-i18n="tagline">De meest gespeelde akkoordprogressies, per stijl. Luister, speel mee en test jezelf.</p>
+  </div>
+  <div class="hdr-r">
+    <div class="tools">
+      <button class="ghost inst" id="installBtn" type="button" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v8.2M4.6 6.6 8 10l3.4-3.4M2.5 13.5h11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="install">Installeer app</span></button>
+      <div class="langs" role="group" aria-label="Taal" data-i18n-aria="lang">
+        <button type="button" data-lang="nl" lang="nl" aria-label="Nederlands">NL</button>
+        <button type="button" data-lang="en" lang="en" aria-label="English">EN</button>
+      </div>
+    </div>
+    <nav class="genres" role="tablist" aria-label="Stijl" data-i18n-aria="style">
+      <button role="tab" data-g="jazz" id="tab-jazz" data-i18n="g_jazz">Jazz</button>
+      <button role="tab" data-g="pop" id="tab-pop" data-i18n="g_pop">Pop</button>
+      <button role="tab" data-g="klassiek" id="tab-klassiek" data-i18n="g_klassiek">Klassiek</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="blurb" id="blurb"></p>
+  <section class="studio">
+    <div class="progs" id="progs"></div>
+    <div class="panel player">
+      <div>
+        <p class="eyebrow" id="pKey"></p>
+        <h2 id="pName"></h2>
+        <p class="desc" id="pDesc"></p>
+        <p class="listen" id="pListen"></p>
+      </div>
+      <div class="controls">
+        <button class="play" id="playBtn" type="button"></button>
+        <label class="ctl"><span data-i18n="key">Toonsoort</span> <select id="keySel"></select></label>
+        <button class="ghost" id="rndKey" type="button" data-i18n="rndKey">Willekeurige toonsoort</button>
+        <label class="ctl"><span data-i18n="tempo">Tempo</span> <input type="range" id="bpm" min="50" max="180" step="2"><span class="num" id="bpmVal"></span></label>
+        <label class="tog"><input type="checkbox" id="loop" checked> <span data-i18n="loop">Herhalen</span></label>
+        <label class="tog"><input type="checkbox" id="click"> <span data-i18n="metro">Metronoom</span></label>
+      </div>
+      <div class="now">
+        <div><small data-i18n="now">Nu</small><div class="sym" id="nowSym">–</div><div class="rn" id="nowRn">&nbsp;</div></div>
+        <div class="nx"><small data-i18n="next">Volgende</small><div class="sym" id="nxSym">–</div><div class="rn" id="nxRn">&nbsp;</div></div>
+      </div>
+      <div class="chords" id="chords"></div>
+      <div>
+        <div class="kbwrap"><svg id="kb" role="img" aria-label="Klavier met de gespeelde tonen" data-i18n-aria="kb"></svg></div>
+        <div class="legend"><span><i style="background:var(--acc)"></i><span data-i18n="lgChord">Akkoord (rechterhand)</span></span><span><i style="background:var(--bass)"></i><span data-i18n="lgBass">Bas (linkerhand)</span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="practice panel">
+    <div class="phead">
+      <h2 data-i18n="practice">Oefenen</h2>
+      <div class="modes" role="tablist" aria-label="Oefenvorm" data-i18n-aria="pmode">
+        <button role="tab" data-m="oor" id="m-oor" data-i18n="m_oor">Gehoor</button>
+        <button role="tab" data-m="theo" id="m-theo" data-i18n="m_theo">Theorie</button>
+        <button role="tab" data-m="dic" id="m-dic" data-i18n="m_dic">Akkoorden raden</button>
+      </div>
+      <div class="score" id="score"></div>
+    </div>
+    <div id="quiz"></div>
+  </section>
+</main>
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button class="play" id="toastBtn" type="button"></button></div>
+
+<script>
+/* ---------- taal / language ---------- */
+const PROG_EN={
+ jazz:[
+  ['ii–V–I major','The building block of almost every jazz standard: tension on V7, rest on Imaj7.','Autumn Leaves, Satin Doll'],
+  ['ii–V–i minor','A half-diminished ii, a V7 with a flat nine and a minor tonic with an added sixth.','Autumn Leaves (B section), Blue Bossa'],
+  ['I–vi–ii–V (turnaround)','The loop that takes you back to the top, with VI7 as a secondary dominant to ii.','I Got Rhythm (rhythm changes)'],
+  ['iii–VI–ii–V–I','A chain of fifths: each dominant resolves to the next chord.','Stella by Starlight (fragments)'],
+  ['Tritone substitution','V7 replaced by ♭II7: the same third and seventh, but a chromatically descending bass.','The Girl from Ipanema (bridge)'],
+  ['Backdoor ii–V','Back to the tonic via the minor subdominant and ♭VII7. Softer than a regular V–I.','Lady Bird'],
+  ['Jazz blues (12 bars)','The blues form with ii–Vs, a diminished passing chord and a turnaround at the end.','Billie’s Bounce, Now’s the Time'],
+  ['Minor blues (12 bars)','Blues in minor, with ♭VI7 as a dark lead-in to the dominant.','Mr. P.C., Equinox'],
+  ['Rhythm changes (bridge)','Four dominants in a cycle of fifths, two bars each.','I Got Rhythm, Oleo, Anthropology'],
+  ['Minor line cliché','The chord stays put while one voice descends chromatically: root, major seventh, minor seventh, sixth.','My Funny Valentine, Michelle'],
+  ['Diminished passing chord','A °7 chord on ♯I fills the gap between I and ii with a chromatically rising bass.',''],
+  ['Coltrane changes','Three tonics a major third apart, each prepared by its own dominant.','Giant Steps, Countdown'],
+ ],
+ pop:[
+  ['I–V–vi–IV','The pop progression. Thousands of hits run on these four chords.','Let It Be, With or Without You'],
+  ['vi–IV–I–V','The same chords, but starting on the minor. Instantly more melancholic.','Zombie (The Cranberries)'],
+  ['I–vi–IV–V (doo-wop)','The fifties progression, still everywhere in ballads.','Stand by Me, Every Breath You Take'],
+  ['I–IV–vi–V','A variant that saves the minor chord for later; open and upbeat.','many modern pop and worship songs'],
+  ['I–♭VII–IV–I (Mixolydian)','The borrowed ♭VII chord gives a rocky, sunny feel without a leading tone.','Hey Jude (coda), Sweet Child O’ Mine'],
+  ['i–♭VI–♭III–♭VII','A minor loop with a cinematic, epic sound.','lots of film and game music'],
+  ['I–IV–iv–I','The minor iv, borrowed from the minor key, adds a wistful turn just before the tonic.','many Beatles songs'],
+  ['Blues form (12 bars)','The basic form of blues and rock ’n’ roll: four bars of I, two of IV, two of I, then V–IV–I–V.','Johnny B. Goode, Hound Dog'],
+  ['I–III–IV–iv','A major III as a surprise, followed by the wistful minor iv.','Creep (Radiohead)'],
+  ['i–♭VII–♭VI–♭VII','An Aeolian rock loop that rocks back and forth between ♭VI and ♭VII.','All Along the Watchtower'],
+  ['I–♭VI–♭VII–I','Two borrowed chords climbing triumphantly to the tonic.','many rock ballads and game music'],
+  ['Descending bass line','The bass steps down while the chords above follow in inversions.','A Whiter Shade of Pale, Don’t Look Back in Anger (related)'],
+  ['Royal Road (IV–V–iii–vi)','The favourite progression of J-pop and anime: it starts on the subdominant and ends on minor.','many J-pop songs and anime openings'],
+  ['Just the Two of Us','A minor soul loop with ♭VImaj7, a dominant and a ii–V to the relative major.','Just the Two of Us, lots of neo-soul'],
+ ],
+ klassiek:[
+  ['Authentic cadence','Tonic, subdominant, dominant, tonic: the foundation of tonal harmony.','almost every ending by Mozart and Haydn'],
+  ['I–ii⁶–V⁷–I','The ii in first inversion has the same bass as IV but leads more smoothly to V7.','Bach chorales'],
+  ['Pachelbel’s Canon','A descending bass line in fourths and seconds under eight chords.','Canon in D (Pachelbel)'],
+  ['Circle of fifths','Each root falls a fifth (or rises a fourth) through every degree of the scale.','Vivaldi, Handel, Baroque sequences'],
+  ['Andalusian cadence','A stepwise descending bass from i to V, from flamenco and the Baroque.','Hit the Road Jack, flamenco'],
+  ['Deceptive cadence','V resolves not to I but to vi. The ear expects rest and gets a surprise.','many Romantic art songs'],
+  ['Plagal cadence','IV to I without a dominant: the “amen” at the end of a hymn.','the amen in hymns'],
+  ['Neapolitan sixth','The ♭II chord in first inversion as a dramatic preparation for V.','Moonlight Sonata (Beethoven)'],
+  ['Half cadence','The phrase ends on V instead of I. It sounds like a comma: something has to follow.','the end of many antecedent phrases in Mozart'],
+  ['Cadential six-four','I⁶₄ over the dominant bass delays the V; best known from the end of a concerto cadenza.','Mozart piano concertos (before the cadenza)'],
+  ['Secondary dominant (V/V)','The dominant of the dominant: a borrowed leading tone that gives V extra drive.','everywhere in Mozart and Beethoven'],
+  ['Diminished leading-tone chord','vii°7 in minor: four minor thirds that resolve to the tonic with great tension.','Bach, Baroque recitatives'],
+  ['Lament bass','A descending tetrachord in the bass from tonic to dominant, the classic lament figure.','Dido’s Lament (Purcell, related)'],
+  ['La Folia','One of the oldest fixed chord patterns, on which composers wrote variations for centuries.','Corelli, Vivaldi, Handel (Sarabande)'],
+  ['Picardy third','A piece in minor that ends on a major tonic: sudden light.','final chords in Bach’s chorales and fugues'],
+ ]};
+const I18N={
+ nl:{title:'Progressie Oefenkamer',brand:'Progressie <b>Oefenkamer</b>',tagline:'De meest gespeelde akkoordprogressies, per stijl. Luister, speel mee en test jezelf.',
+  style:'Stijl',lang:'Taal',g_jazz:'Jazz',g_pop:'Pop',g_klassiek:'Klassiek',
+  b_jazz:'Septiemakkoorden, ii–V’s en substituties. Je hoort een walking bass en akkoorden in het Charleston-ritme (tel 1 en de "en" van 2).',
+  b_pop:'Drieklanken in loops van vier akkoorden. Je hoort akkoorden op elke tel en de grondtoon in achtsten in de bas.',
+  b_klassiek:'Cadensen en stemvoering zoals in een koraal. Je hoort lang aangehouden akkoorden met de stemmen zo dicht mogelijk bij elkaar.',
+  progs:'Progressies',key:'Toonsoort',rndKey:'Willekeurige toonsoort',tempo:'Tempo',loop:'Herhalen',metro:'Metronoom',now:'Nu',next:'Volgende',
+  kb:'Klavier met de gespeelde tonen',lgChord:'Akkoord (rechterhand)',lgBass:'Bas (linkerhand)',
+  practice:'Oefenen',pmode:'Oefenvorm',m_oor:'Gehoor',m_theo:'Theorie',m_dic:'Akkoorden raden',mode_oor:'gehoor',mode_theo:'theorie',mode_dic:'akkoorden raden',
+  major:'majeur',minor:'mineur',bars:n=>n===1?'1 maat':n+' maten',listen:'Luister naar:',play:'Afspelen',stop:'Stop',
+  seeRes:'Bekijk resultaat',nextQ:'Volgende vraag',qOf:(n,t)=>`Vraag ${n} van ${t}`,
+  intro_oor:g=>`Je hoort een ${g}-progressie in een willekeurige toonsoort. Kies welke het is uit vier opties. Tip: let op het eerste akkoord (majeur of mineur) en hoe de bas beweegt.`,
+  intro_dic:g=>`Je hoort een ${g}-progressie en krijgt de toonsoort te zien. Kies voor elk akkoord de grondtoon en de soort. Je kunt alles of één akkoord opnieuw beluisteren en je eigen keuze laten klinken om te vergelijken. Omkeringen tellen niet mee: alleen grondtoon en soort.`,
+  intro_theo:'Je krijgt een progressie in een willekeurige toonsoort met de trapnamen erbij. Bepaal welk akkoord op de plek met het vraagteken hoort. Zo oefen je transponeren.',
+  q_oor:'Welke progressie hoor je?',q_dic0:'Raad de akkoorden zelf',q_theo0:'Welk akkoord hoort op de lege plek?',start:'Start ronde van 10',
+  listenAny:'Luister zo vaak als je wilt.',keyIs:k=>`Toonsoort: ${k}.`,chordsLbl:'Akkoorden:',again:'Opnieuw beluisteren',reveal:'Toon antwoord',skip:'Overslaan',
+  revealed:'Antwoord getoond · telt als overgeslagen',correct:'Goed!',wasProg:n=>`Helaas, het was ${n}.`,practiceThis:'Oefen deze progressie',
+  whichSlot:'Welk akkoord hoort op de plek met het vraagteken?',rightChord:c=>`Het juiste akkoord is ${c}.`,hearProg:'Beluister progressie',
+  dicTitle:k=>`Raad de akkoorden · ${k}`,dicDone:n=>`Dit was <b>${n}</b>. Tik op een vak om het juiste akkoord te horen.`,
+  dicHelp:'Kies een vak en vul de grondtoon en de soort in. Het oplichtende vak is het akkoord dat nu klinkt.',
+  chordN:i=>`Akkoord ${i}`,rootOf:i=>`Grondtoon van akkoord ${i}`,type:'Soort',hearAll:'Beluister alles',nOfGood:(a,b)=>`${a} van ${b} goed`,
+  hearN:i=>`Beluister akkoord ${i}`,playMine:'Speel mijn keuze',showRn:'Toon trapnamen',check:'Controleer',
+  resLbl:(g,m)=>`Resultaat · ${g} · ${m}`,bigScore:(a,b)=>`<b>${a}</b> van ${b} goed`,
+  msg10:'Perfect, alles goed!',msg8:'Heel goed gedaan.',msg5:'Goed bezig, nog even oefenen.',msg0:'Blijf oefenen, het wordt steeds makkelijker.',
+  skippedN:n=>` Je hebt ${n} ${n===1?'vraag':'vragen'} overgeslagen.`,dicTotal:(a,b)=>` In totaal had je ${a} van de ${b} akkoorden goed. Een vraag telt als goed als alle akkoorden kloppen.`,
+  a_ok:'goed',a_sk:'overgeslagen',a_no:'fout',skippedTag:' · overgeslagen',prac:'Oefen',pracN:n=>`Oefen ${n}`,newRound:'Nieuwe ronde',
+  scoreLine:(g,m,a,b,d)=>`${g} · ${m}: <b>${a}/${b}</b> ${d?'akkoorden ':''}goed`,noScore:g=>`Nog geen antwoorden in ${g}`,
+  install:'Installeer app',update:'Er is een nieuwe versie van de app.',reload:'Vernieuwen'},
+ en:{title:'Progression Practice Room',brand:'Progression <b>Practice Room</b>',tagline:'The most played chord progressions, by style. Listen, play along and test yourself.',
+  style:'Style',lang:'Language',g_jazz:'Jazz',g_pop:'Pop',g_klassiek:'Classical',
+  b_jazz:'Seventh chords, ii–Vs and substitutions. You’ll hear a walking bass and chords in the Charleston rhythm (beat 1 and the “and” of 2).',
+  b_pop:'Triads in four-chord loops. You’ll hear chords on every beat and the root in eighth notes in the bass.',
+  b_klassiek:'Cadences and voice leading as in a chorale. You’ll hear sustained chords with the voices kept as close together as possible.',
+  progs:'Progressions',key:'Key',rndKey:'Random key',tempo:'Tempo',loop:'Loop',metro:'Metronome',now:'Now',next:'Next',
+  kb:'Keyboard showing the notes being played',lgChord:'Chord (right hand)',lgBass:'Bass (left hand)',
+  practice:'Practice',pmode:'Practice mode',m_oor:'Ear',m_theo:'Theory',m_dic:'Guess the chords',mode_oor:'ear',mode_theo:'theory',mode_dic:'guess the chords',
+  major:'major',minor:'minor',bars:n=>n===1?'1 bar':n+' bars',listen:'Listen to:',play:'Play',stop:'Stop',
+  seeRes:'See results',nextQ:'Next question',qOf:(n,t)=>`Question ${n} of ${t}`,
+  intro_oor:g=>`You’ll hear a ${g} progression in a random key. Pick which one it is from four options. Tip: listen to the first chord (major or minor) and to how the bass moves.`,
+  intro_dic:g=>`You’ll hear a ${g} progression and see the key. For each chord, pick the root and the chord type. You can replay everything or a single chord, and play your own guess to compare. Inversions don’t count: only root and type.`,
+  intro_theo:'You get a progression in a random key with its Roman numerals. Work out which chord belongs in the slot with the question mark. A good way to practise transposing.',
+  q_oor:'Which progression do you hear?',q_dic0:'Guess the chords yourself',q_theo0:'Which chord fills the gap?',start:'Start a round of 10',
+  listenAny:'Listen as often as you like.',keyIs:k=>`Key: ${k}.`,chordsLbl:'Chords:',again:'Listen again',reveal:'Show answer',skip:'Skip',
+  revealed:'Answer shown · counts as skipped',correct:'Correct!',wasProg:n=>`Not quite, it was ${n}.`,practiceThis:'Practise this progression',
+  whichSlot:'Which chord belongs in the slot with the question mark?',rightChord:c=>`The correct chord is ${c}.`,hearProg:'Play progression',
+  dicTitle:k=>`Guess the chords · ${k}`,dicDone:n=>`This was <b>${n}</b>. Tap a slot to hear the correct chord.`,
+  dicHelp:'Pick a slot and fill in the root and the type. The highlighted slot is the chord that is playing now.',
+  chordN:i=>`Chord ${i}`,rootOf:i=>`Root of chord ${i}`,type:'Type',hearAll:'Play all',nOfGood:(a,b)=>`${a} of ${b} correct`,
+  hearN:i=>`Play chord ${i}`,playMine:'Play my guess',showRn:'Show numerals',check:'Check',
+  resLbl:(g,m)=>`Results · ${g} · ${m}`,bigScore:(a,b)=>`<b>${a}</b> of ${b} correct`,
+  msg10:'Perfect, all correct!',msg8:'Very well done.',msg5:'Good work, keep practising.',msg0:'Keep practising, it gets easier every time.',
+  skippedN:n=>` You skipped ${n} ${n===1?'question':'questions'}.`,dicTotal:(a,b)=>` In total you got ${a} of ${b} chords right. A question only counts as correct when every chord is right.`,
+  a_ok:'correct',a_sk:'skipped',a_no:'wrong',skippedTag:' · skipped',prac:'Practise',pracN:n=>`Practise ${n}`,newRound:'New round',
+  scoreLine:(g,m,a,b,d)=>`${g} · ${m}: <b>${a}/${b}</b> ${d?'chords ':''}correct`,noScore:g=>`No answers yet in ${g}`,
+  install:'Install app',update:'A new version of the app is available.',reload:'Reload'}};
+const LANG_KEY='poLang'+(window.APP_LANG?'_'+window.APP_LANG:'');
+let LANG=(()=>{try{const v=localStorage.getItem(LANG_KEY);if(v==='nl'||v==='en')return v}catch(e){}
+  if(window.APP_LANG)return window.APP_LANG;
+  return /^nl\b/i.test(navigator.language||'nl')?'nl':'en'})();
+function t(k,...a){const v=(I18N[LANG]||I18N.nl)[k];return typeof v==='function'?v(...a):(v??k)}
+
+/* ---------- muziektheorie ---------- */
+const SHARP=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+const FLAT =['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B'];
+const MAJ_NAMES=['C','D♭','D','E♭','E','F','F♯','G','A♭','A','B♭','B'];
+const MIN_NAMES=['C','C♯','D','E♭','E','F','F♯','G','G♯','A','B♭','B'];
+const FLAT_MAJ=new Set([5,10,3,8,1]);
+// voicing-intervallen per kwaliteit
+const Q={maj:[0,4,7],min:[0,3,7],dim:[0,3,6],dom7:[0,4,7,10],maj7:[0,4,7,11],min7:[0,3,7,10],
+  m7b5:[0,3,6,10],dim7:[0,3,6,9],min6:[0,3,7,9],dom7b9:[4,7,10,13],mmaj7:[0,3,7,11]};
+const SUF={maj:'',min:'m',dim:'°',dom7:'7',maj7:'maj7',min7:'m7',m7b5:'m7♭5',dim7:'°7',min6:'m6',dom7b9:'7♭9',mmaj7:'m(maj7)'};
+const C=(rn,off,q,beats=4,o={})=>({rn,off,q,beats,...o});
+
+const GENRES={
+ jazz:{label:'Jazz',blurb:'Septiemakkoorden, ii–V’s en substituties. Je hoort een walking bass en akkoorden in het Charleston-ritme (tel 1 en de "en" van 2).',
+  bpm:120,progs:[
+  {n:'ii–V–I majeur',d:'De bouwsteen van bijna elke jazzstandard: spanning op V7, rust op Imaj7.',l:'Autumn Leaves, Satin Doll',
+   ch:[C('ii⁷',2,'min7'),C('V⁷',7,'dom7'),C('Imaj⁷',0,'maj7',8)]},
+  {n:'ii–V–i mineur',d:'Halfverminderde ii, een V7 met kleine none en een mineur-tonica met sext.',l:'Autumn Leaves (B-deel), Blue Bossa',minor:true,
+   ch:[C('iiø⁷',2,'m7b5'),C('V⁷♭⁹',7,'dom7b9'),C('i⁶',0,'min6',8)]},
+  {n:'I–vi–ii–V (turnaround)',d:'Het rondje waarmee je naar het begin terugkeert. Met VI7 als secundaire dominant naar ii.',l:'I Got Rhythm (rhythm changes)',
+   ch:[C('Imaj⁷',0,'maj7'),C('VI⁷',9,'dom7'),C('ii⁷',2,'min7'),C('V⁷',7,'dom7')]},
+  {n:'iii–VI–ii–V–I',d:'Een keten van kwintstappen: elke dominant lost op naar het volgende akkoord.',l:'Stella by Starlight (fragmenten)',
+   ch:[C('iii⁷',4,'min7'),C('VI⁷',9,'dom7'),C('ii⁷',2,'min7'),C('V⁷',7,'dom7'),C('Imaj⁷',0,'maj7',8)]},
+  {n:'Tritonussubstitutie',d:'V7 vervangen door ♭II7: dezelfde terts en septiem, maar een chromatisch dalende bas.',l:'The Girl from Ipanema (brug)',
+   ch:[C('ii⁷',2,'min7'),C('♭II⁷',1,'dom7',4,{sp:'b'}),C('Imaj⁷',0,'maj7',8)]},
+  {n:'Backdoor ii–V',d:'Via de mineur-subdominant en ♭VII7 terug naar de tonica. Zachter dan een gewone V–I.',l:'Lady Bird',
+   ch:[C('iv⁷',5,'min7'),C('♭VII⁷',10,'dom7',4,{sp:'b'}),C('Imaj⁷',0,'maj7',8)]},
+  {n:'Jazzblues (12 maten)',d:'Het blues-schema met ii–V’s, een verminderd doorgangsakkoord en een turnaround aan het eind.',l:'Billie’s Bounce, Now’s the Time',key:5,
+   ch:[C('I⁷',0,'dom7'),C('IV⁷',5,'dom7'),C('I⁷',0,'dom7'),C('v⁷',7,'min7',2),C('I⁷',0,'dom7',2),
+       C('IV⁷',5,'dom7'),C('♯iv°⁷',6,'dim7',4,{sp:'#'}),C('I⁷',0,'dom7'),C('VI⁷',9,'dom7'),
+       C('ii⁷',2,'min7'),C('V⁷',7,'dom7'),C('I⁷',0,'dom7',2),C('VI⁷',9,'dom7',2),C('ii⁷',2,'min7',2),C('V⁷',7,'dom7',2)]},
+  {n:'Mineurblues (12 maten)',d:'Blues in mineur met ♭VI7 als donkere opmaat naar de dominant.',l:'Mr. P.C., Equinox',minor:true,
+   ch:[C('i⁷',0,'min7',8),C('i⁷',0,'min7',8),C('iv⁷',5,'min7',8),C('i⁷',0,'min7',8),C('♭VI⁷',8,'dom7',4,{sp:'b'}),C('V⁷♭⁹',7,'dom7b9'),C('i⁷',0,'min7'),C('V⁷♭⁹',7,'dom7b9')]},
+  {n:'Rhythm changes (brug)',d:'Vier dominanten in een kwintenketen, elk twee maten lang.',l:'I Got Rhythm, Oleo, Anthropology',
+   ch:[C('III⁷',4,'dom7',8),C('VI⁷',9,'dom7',8),C('II⁷',2,'dom7',8),C('V⁷',7,'dom7',8)]},
+  {n:'Lijncliché in mineur',d:'Het akkoord blijft staan terwijl één stem chromatisch daalt: grondtoon, grote septiem, kleine septiem, sext.',l:'My Funny Valentine, Michelle',minor:true,key:2,
+   ch:[C('i',0,'min'),C('i(maj⁷)',0,'mmaj7'),C('i⁷',0,'min7'),C('i⁶',0,'min6')]},
+  {n:'Verminderd doorgangsakkoord',d:'Een °7-akkoord op ♯I vult de ruimte tussen I en ii met een chromatisch stijgende bas.',l:'',
+   ch:[C('Imaj⁷',0,'maj7'),C('♯I°⁷',1,'dim7',4,{sp:'#'}),C('ii⁷',2,'min7'),C('V⁷',7,'dom7')]},
+  {n:'Coltrane changes',d:'Drie tonica’s op een grote terts afstand, elk voorbereid door een eigen dominant.',l:'Giant Steps, Countdown',key:11,
+   ch:[C('Imaj⁷',0,'maj7',2),C('♭III⁷',3,'dom7',2,{sp:'b'}),C('♭VImaj⁷',8,'maj7',2,{sp:'b'}),C('VII⁷',11,'dom7',2,{sp:'b'}),C('IIImaj⁷',4,'maj7',2,{sp:'b'}),C('V⁷',7,'dom7',2),C('Imaj⁷',0,'maj7',4)]},
+ ]},
+ pop:{label:'Pop',blurb:'Drieklanken in loops van vier akkoorden. Je hoort akkoorden op elke tel en de grondtoon in achtsten in de bas.',
+  bpm:100,progs:[
+  {n:'I–V–vi–IV',d:'Dé popprogressie. Duizenden hits draaien op deze vier akkoorden.',l:'Let It Be, With or Without You',
+   ch:[C('I',0,'maj'),C('V',7,'maj'),C('vi',9,'min'),C('IV',5,'maj')]},
+  {n:'vi–IV–I–V',d:'Dezelfde akkoorden, maar beginnend op mineur. Klinkt direct melancholischer.',l:'Zombie (The Cranberries)',
+   ch:[C('vi',9,'min'),C('IV',5,'maj'),C('I',0,'maj'),C('V',7,'maj')]},
+  {n:'I–vi–IV–V (doo-wop)',d:'De jaren-vijftigprogressie, nog steeds overal in ballads.',l:'Stand by Me, Every Breath You Take',
+   ch:[C('I',0,'maj'),C('vi',9,'min'),C('IV',5,'maj'),C('V',7,'maj')]},
+  {n:'I–IV–vi–V',d:'Een variant die het mineurakkoord pas later laat vallen; open en optimistisch.',l:'veel moderne pop- en worshipnummers',
+   ch:[C('I',0,'maj'),C('IV',5,'maj'),C('vi',9,'min'),C('V',7,'maj')]},
+  {n:'I–♭VII–IV–I (mixolydisch)',d:'Het geleende ♭VII-akkoord geeft een rockerig, zonnig gevoel zonder leidtoon.',l:'Hey Jude (slot), Sweet Child O’ Mine',
+   ch:[C('I',0,'maj'),C('♭VII',10,'maj',4,{sp:'b'}),C('IV',5,'maj'),C('I',0,'maj')]},
+  {n:'i–♭VI–♭III–♭VII',d:'Mineur-loop met een filmische, epische klank.',l:'veel film- en gamemuziek',minor:true,key:9,
+   ch:[C('i',0,'min'),C('♭VI',8,'maj',4,{sp:'b'}),C('♭III',3,'maj',4,{sp:'b'}),C('♭VII',10,'maj',4,{sp:'b'})]},
+  {n:'I–IV–iv–I',d:'Het mineur-iv-akkoord, geleend uit mineur, geeft een weemoedige wending vlak voor de tonica.',l:'veel Beatles-nummers',
+   ch:[C('I',0,'maj'),C('IV',5,'maj'),C('iv',5,'min'),C('I',0,'maj')]},
+  {n:'Bluesschema (12 maten)',d:'Het basisschema van blues en rock-’n-roll: vier maten I, twee IV, twee I, dan V–IV–I–V.',l:'Johnny B. Goode, Hound Dog',
+   ch:[C('I⁷',0,'dom7',8),C('I⁷',0,'dom7',8),C('IV⁷',5,'dom7',8),C('I⁷',0,'dom7',8),C('V⁷',7,'dom7'),C('IV⁷',5,'dom7'),C('I⁷',0,'dom7'),C('V⁷',7,'dom7')]},
+  {n:'I–III–IV–iv',d:'Een majeur-III als verrassing, daarna het weemoedige mineur-iv.',l:'Creep (Radiohead)',
+   ch:[C('I',0,'maj'),C('III',4,'maj'),C('IV',5,'maj'),C('iv',5,'min')]},
+  {n:'i–♭VII–♭VI–♭VII',d:'Een eolische rockloop die heen en weer schommelt tussen ♭VI en ♭VII.',l:'All Along the Watchtower',minor:true,key:9,
+   ch:[C('i',0,'min'),C('♭VII',10,'maj',4,{sp:'b'}),C('♭VI',8,'maj',4,{sp:'b'}),C('♭VII',10,'maj',4,{sp:'b'})]},
+  {n:'I–♭VI–♭VII–I',d:'Twee geleende akkoorden die triomfantelijk naar de tonica klimmen.',l:'veel rockballads en gamemuziek',
+   ch:[C('I',0,'maj'),C('♭VI',8,'maj',4,{sp:'b'}),C('♭VII',10,'maj',4,{sp:'b'}),C('I',0,'maj')]},
+  {n:'Dalende baslijn',d:'De bas zakt stap voor stap terwijl de akkoorden erboven in omkeringen meebewegen.',l:'A Whiter Shade of Pale, Don’t Look Back in Anger (verwant)',
+   ch:[C('I',0,'maj'),C('V⁶',7,'maj',4,{bass:11}),C('vi',9,'min'),C('I⁶₄',0,'maj',4,{bass:7}),C('IV',5,'maj'),C('I⁶',0,'maj',4,{bass:4}),C('ii',2,'min'),C('V',7,'maj')]},
+  {n:'Royal Road (IV–V–iii–vi)',d:'De favoriete progressie van J-pop en anime: begint op de subdominant en eindigt op mineur.',l:'veel J-pop en anime-openers',
+   ch:[C('IVmaj⁷',5,'maj7'),C('V⁷',7,'dom7'),C('iii⁷',4,'min7'),C('vi',9,'min')]},
+  {n:'Just the Two of Us',d:'Een soul-loop in mineur met ♭VImaj7, een dominant en een ii–V naar de relatieve majeur.',l:'Just the Two of Us, veel neo-soul',minor:true,key:5,
+   ch:[C('♭VImaj⁷',8,'maj7',4,{sp:'b'}),C('V⁷',7,'dom7'),C('i⁷',0,'min7'),C('♭vii⁷',10,'min7',2,{sp:'b'}),C('♭III⁷',3,'dom7',2,{sp:'b'})]},
+ ]},
+ klassiek:{label:'Klassiek',blurb:'Cadensen en stemvoering zoals in een koraal. Je hoort lang aangehouden akkoorden met de stemmen zo dicht mogelijk bij elkaar.',
+  bpm:72,progs:[
+  {n:'Authentieke cadens',d:'Tonica, subdominant, dominant, tonica: het fundament van de tonale harmonie.',l:'bijna elk slot van Mozart en Haydn',
+   ch:[C('I',0,'maj'),C('IV',5,'maj'),C('V',7,'maj'),C('I',0,'maj')]},
+  {n:'I–ii⁶–V⁷–I',d:'De ii in eerste omkering heeft dezelfde bas als IV, maar leidt soepeler naar V7.',l:'koralen van Bach',
+   ch:[C('I',0,'maj'),C('ii⁶',2,'min',4,{bass:5}),C('V⁷',7,'dom7'),C('I',0,'maj')]},
+  {n:'Pachelbel-canon',d:'Een dalende baslijn in kwarten en secunden onder acht akkoorden.',l:'Canon in D (Pachelbel)',key:2,
+   ch:[C('I',0,'maj'),C('V',7,'maj'),C('vi',9,'min'),C('iii',4,'min'),C('IV',5,'maj'),C('I',0,'maj'),C('IV',5,'maj'),C('V',7,'maj')]},
+  {n:'Kwintval',d:'Elke grondtoon zakt een kwint (of stijgt een kwart) langs alle trappen van de toonladder.',l:'Vivaldi, Händel, barokke sequensen',
+   ch:[C('I',0,'maj'),C('IV',5,'maj'),C('vii°',11,'dim'),C('iii',4,'min'),C('vi',9,'min'),C('ii',2,'min'),C('V',7,'maj'),C('I',0,'maj')]},
+  {n:'Andalusische cadens',d:'Een stapsgewijs dalende bas van i naar V, uit de flamenco en de barok.',l:'Hit the Road Jack, flamenco',minor:true,key:9,
+   ch:[C('i',0,'min'),C('♭VII',10,'maj',4,{sp:'b'}),C('♭VI',8,'maj',4,{sp:'b'}),C('V',7,'maj')]},
+  {n:'Bedrieglijk slot',d:'V lost niet op naar I maar naar vi. Het oor verwacht rust en krijgt een verrassing.',l:'veel Romantische liederen',
+   ch:[C('I',0,'maj'),C('IV',5,'maj'),C('V',7,'maj'),C('vi',9,'min')]},
+  {n:'Plagale cadens',d:'IV naar I zonder dominant: het "amen" aan het eind van een hymne.',l:'het amen in kerkliederen',
+   ch:[C('I',0,'maj'),C('IV',5,'maj'),C('I',0,'maj'),C('IV',5,'maj'),C('I',0,'maj',8)]},
+  {n:'Napolitaanse sext',d:'Het ♭II-akkoord in eerste omkering als dramatische voorbereiding op V.',l:'Mondscheinsonate (Beethoven)',minor:true,key:9,
+   ch:[C('i',0,'min'),C('N⁶',1,'maj',4,{sp:'b',bass:5}),C('V⁷',7,'dom7'),C('i',0,'min')]},
+  {n:'Halve cadens',d:'De frase eindigt op V in plaats van I. Klinkt als een komma: er moet nog iets volgen.',l:'het einde van veel voorzinnen bij Mozart',
+   ch:[C('I',0,'maj'),C('vi',9,'min'),C('ii⁶',2,'min',4,{bass:5}),C('V',7,'maj')]},
+  {n:'Cadensaal kwartsextakkoord',d:'I⁶₄ boven de dominantbas vertraagt de V; vooral bekend van het slot van een concerto-cadens.',l:'Mozart-pianoconcerten (voor de solocadens)',
+   ch:[C('I',0,'maj'),C('IV',5,'maj'),C('I⁶₄',0,'maj',4,{bass:7}),C('V⁷',7,'dom7'),C('I',0,'maj',8)]},
+  {n:'Secundaire dominant (V/V)',d:'De dominant van de dominant: een geleende leidtoon die de V extra kracht geeft.',l:'overal bij Mozart en Beethoven',
+   ch:[C('I',0,'maj'),C('V⁷/V',2,'dom7'),C('V⁷',7,'dom7'),C('I',0,'maj')]},
+  {n:'Verminderd leidtoonakkoord',d:'vii°7 in mineur: vier kleine tertsen die met grote spanning naar de tonica oplossen.',l:'Bach, barokke recitatieven',minor:true,key:9,
+   ch:[C('i',0,'min'),C('iv',5,'min'),C('vii°⁷',11,'dim7',4,{sp:'#'}),C('i',0,'min')]},
+  {n:'Lamento-bas',d:'Een dalende tetrachord in de bas van tonica naar dominant, het klassieke klaagmotief.',l:'Dido’s Lament (Purcell, verwant)',minor:true,key:7,
+   ch:[C('i',0,'min'),C('v⁶',7,'min',4,{bass:10}),C('iv⁶',5,'min',4,{bass:8}),C('V',7,'maj')]},
+  {n:'La Folia',d:'Een van de oudste vaste akkoordschema’s, waarop componisten eeuwenlang variaties schreven.',l:'Corelli, Vivaldi, Händel (Sarabande)',minor:true,key:2,
+   ch:[C('i',0,'min'),C('V',7,'maj'),C('i',0,'min'),C('♭VII',10,'maj',4,{sp:'b'}),C('♭III',3,'maj',4,{sp:'b'}),C('♭VII',10,'maj',4,{sp:'b'}),C('i',0,'min'),C('V',7,'maj')]},
+  {n:'Picardische terts',d:'Een stuk in mineur dat eindigt op een majeur-tonica: plotseling licht.',l:'slotakkoorden in Bachs koralen en fuga’s',minor:true,key:2,
+   ch:[C('i',0,'min'),C('iv',5,'min'),C('V',7,'maj'),C('I',0,'maj',8)]},
+ ]},
+};
+
+for(const g in GENRES)GENRES[g].progs.forEach((p,i)=>{p.g=g;p.en=PROG_EN[g][i]});
+const PN=p=>LANG==='en'?p.en[0]:p.n, PD=p=>LANG==='en'?p.en[1]:p.d, PL=p=>LANG==='en'?p.en[2]:p.l;
+const GL=g=>t('g_'+(g||state.genre)), GLl=g=>GL(g).toLowerCase();
+function keyFlat(k,minor){
+  if(minor) return MIN_NAMES[k].includes('♭')||FLAT_MAJ.has((k+3)%12);
+  return FLAT_MAJ.has(k);
+}
+function keyLabel(k,minor){return (minor?MIN_NAMES:MAJ_NAMES)[k]+' '+t(minor?'minor':'major')}
+function rootName(c,k,minor){
+  const r=(k+c.off)%12, fl=keyFlat(k,minor);
+  const useFlat=c.sp?c.sp==='b':fl;
+  return (useFlat?FLAT:SHARP)[r];
+}
+function voice(r,ints,prev){
+  const ord=[...new Set(ints.map(i=>i%12))].sort((a,b)=>a-b).map(i=>(r+i)%12);
+  let best=null,bs=1e9;
+  for(let rot=0;rot<ord.length;rot++){
+    const seq=ord.slice(rot).concat(ord.slice(0,rot));
+    for(const base of [52,64]){
+      const notes=[base+((seq[0]-base)%12+12)%12];
+      for(let k=1;k<seq.length;k++){let m=notes[k-1]+1;while(m%12!==seq[k])m++;notes.push(m)}
+      if(notes[notes.length-1]>79)continue;
+      const avg=notes.reduce((a,b)=>a+b,0)/notes.length;
+      let s=Math.abs(avg-62)*(prev?0.3:1);
+      if(prev){
+        s+=notes.reduce((a,x)=>a+Math.min(...prev.map(p=>Math.abs(p-x))),0);
+        s+=prev.reduce((a,p)=>a+Math.min(...notes.map(x=>Math.abs(p-x))),0)*0.5;
+      }
+      if(s<bs){bs=s;best=notes}
+    }
+  }
+  return best;
+}
+function realize(prog,k){
+  const fl=keyFlat(k,prog.minor);let prev=null;
+  return prog.ch.map(c=>{
+    const r=(k+c.off)%12;
+    let name=rootName(c,k,prog.minor)+SUF[c.q];
+    const bpc=c.bass!=null?(k+c.bass)%12:r;
+    if(c.bass!=null)name+='/'+(fl?FLAT:SHARP)[bpc];
+    const notes=voice(r,Q[c.q],prev);prev=notes;
+    return {...c,root:r,name,bassPc:bpc,notes,bass:40+((bpc-4+12)%12),ints:Q[c.q]};
+  });
+}
+
+/* ---------- tijdlijn per stijl ---------- */
+function nearest(pc,ref){
+  let best=null,bs=1e9;
+  for(let m=33;m<=55;m++){if(m%12!==pc)continue;const s=Math.abs(m-ref)+0.15*Math.abs(m-43);if(s<bs){bs=s;best=m}}
+  return best;
+}
+function timeline(chords,genre){
+  const ev=[],marks=[];let t=0,bp=43;
+  chords.forEach((c,i)=>{
+    const nb=c.beats,next=chords[(i+1)%chords.length];
+    for(let b=0;b<nb;b++){marks.push({beat:t+b,idx:i,b});ev.push({type:'click',t:t+b,acc:b===0})}
+    if(genre==='jazz'){
+      for(let bar=0;bar<nb;bar+=4){
+        const len=Math.min(4,nb-bar);
+        ev.push({type:'chord',t:t+bar,dur:len>=2?0.8:0.9,notes:c.notes,vel:.95});
+        if(len>=2)ev.push({type:'chord',t:t+bar+1.5,dur:len>=4?1.7:0.45,notes:c.notes,vel:.7});
+      }
+      const all=c.ints.map(x=>(c.root+x)%12);
+      const third=all.includes((c.root+3)%12)?3:4, fifth=all.includes((c.root+6)%12)&&!all.includes((c.root+7)%12)?6:7;
+      const seq=[0,third,fifth,third];
+      for(let b=0;b<nb;b++){
+        let pc;
+        if(b===nb-1&&nb>1)pc=(next.bassPc+11)%12;
+        else pc=(c.bassPc+(b%4===0?0:seq[b%4]))%12;
+        const m=nearest(pc,bp);bp=m;
+        ev.push({type:'bass',t:t+b,dur:.9,notes:[m],vel:b%4===0?1:.85});
+      }
+    }else if(genre==='pop'){
+      for(let b=0;b<nb;b++){
+        ev.push({type:'chord',t:t+b,dur:.82,notes:c.notes,vel:b%4===0?1:.72});
+        ev.push({type:'bass',t:t+b,dur:.42,notes:[c.bass],vel:.95});
+        ev.push({type:'bass',t:t+b+.5,dur:.4,notes:[c.bass],vel:.7});
+      }
+    }else{
+      ev.push({type:'chord',t,dur:nb-.06,notes:c.notes,vel:.9});
+      ev.push({type:'bass',t,dur:nb-.06,notes:[c.bass],vel:.9});
+    }
+    t+=nb;
+  });
+  return {ev,marks,total:t};
+}
+
+/* ---------- geluid ---------- */
+let ctx=null,master=null,bus=null,playing=false,cycleTimer=null,marks=[],rafId=0,source='main',playGenre='jazz';
+function ensureCtx(){
+  if(!ctx){
+    ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const comp=ctx.createDynamicsCompressor();comp.threshold.value=-16;comp.ratio.value=3;
+    master=ctx.createGain();master.gain.value=.8;master.connect(comp);comp.connect(ctx.destination);
+  }
+  if(ctx.state==='suspended')ctx.resume();
+}
+function newBus(){const g=ctx.createGain();g.connect(master);g.oscs=[];return g}
+function osc(type,f,gain,dest,t,end,detune=0){
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type=type;o.frequency.value=f;o.detune.value=detune;g.gain.value=gain;
+  o.connect(g);g.connect(dest);o.start(t);o.stop(end);bus.oscs.push(o);
+}
+function tone(kind,midi,t,dur,vel,n){
+  const f=440*Math.pow(2,(midi-69)/12);
+  const env=ctx.createGain();env.gain.setValueAtTime(0,t);env.connect(bus);
+  const end=t+dur+0.8;
+  let peak=vel*(kind==='bass'?.5:.3)/Math.sqrt(n||1);
+  if(kind==='jazz'){
+    osc('sine',f,1,env,t,end);osc('triangle',f*2,.16,env,t,end);osc('sine',f*3,.04,env,t,end);
+    env.gain.linearRampToValueAtTime(peak,t+.006);env.gain.setTargetAtTime(peak*.35,t+.01,.28);env.gain.setTargetAtTime(0,t+dur,.07);
+  }else if(kind==='pop'){
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1700;lp.Q.value=.6;lp.connect(env);
+    osc('sawtooth',f,.5,lp,t,end,-7);osc('sawtooth',f,.5,lp,t,end,7);osc('sine',f/2,.3,lp,t,end);
+    peak*=.85;
+    env.gain.linearRampToValueAtTime(peak,t+.005);env.gain.setTargetAtTime(peak*.55,t+.01,.15);env.gain.setTargetAtTime(0,t+dur,.05);
+  }else if(kind==='klassiek'){
+    osc('triangle',f,1,env,t,end);osc('sine',f*2,.28,env,t,end);osc('sine',f*4,.05,env,t,end);
+    env.gain.setTargetAtTime(peak,t,.06);env.gain.setTargetAtTime(peak*.8,t+.3,.6);env.gain.setTargetAtTime(0,t+dur,.16);
+  }else if(kind==='bass'){
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=650;lp.connect(env);
+    osc('triangle',f,1,lp,t,end);osc('sine',f,.6,lp,t,end);
+    const sus=playGenre==='klassiek'?.75:.45;
+    env.gain.linearRampToValueAtTime(peak,t+.006);env.gain.setTargetAtTime(peak*sus,t+.01,.3);env.gain.setTargetAtTime(0,t+dur,.04);
+  }else if(kind==='click'){
+    osc('sine',vel>.5?1700:1150,1,env,t,t+.08);
+    env.gain.linearRampToValueAtTime(vel>.5?.13:.07,t+.002);env.gain.setTargetAtTime(0,t+.01,.012);
+  }
+}
+let current=null; // {chords, genre, bpm}
+function scheduleCycle(t0){
+  const {chords,genre}=current;const spb=60/state.bpm;
+  const tl=timeline(chords,genre);
+  for(const e of tl.ev){
+    const t=t0+e.t*spb;
+    if(e.type==='click'){if(state.click)tone('click',0,t,0,e.acc?1:.3);continue}
+    const kind=e.type==='bass'?'bass':genre;
+    for(const m of e.notes)tone(kind,m,t,e.dur*spb,e.vel,e.type==='bass'?1:e.notes.length);
+  }
+  for(const m of tl.marks)marks.push({t:t0+m.beat*spb,idx:m.idx,b:m.b});
+  return t0+tl.total*spb;
+}
+function queueNext(end){
+  clearTimeout(cycleTimer);
+  cycleTimer=setTimeout(()=>{
+    if(!playing)return;
+    if(state.loop&&source==='main'){marks=marks.filter(m=>m.t>ctx.currentTime-5);queueNext(scheduleCycle(end))}
+    else setTimeout(()=>stop(),400);
+  },Math.max(0,(end-ctx.currentTime-0.3)*1000));
+}
+function startPlayback(chords,genre,src){
+  ensureCtx();stop(true);
+  current={chords,genre};source=src;playGenre=genre;bus=newBus();playing=true;marks=[];
+  queueNext(scheduleCycle(ctx.currentTime+0.08));
+  cancelAnimationFrame(rafId);rafId=requestAnimationFrame(tick);
+  updatePlayBtn();
+}
+function stop(silent){
+  playing=false;clearTimeout(cycleTimer);cancelAnimationFrame(rafId);
+  if(bus&&ctx){
+    const b=bus,now=ctx.currentTime;b.gain.setTargetAtTime(0,now,.04);
+    setTimeout(()=>{b.oscs.forEach(o=>{try{o.stop()}catch(e){}});try{b.disconnect()}catch(e){}},300);
+    bus=null;
+  }
+  marks=[];lastShown='';markQuizSlot(-1);
+  if(!silent){showActive(-1,-1);updatePlayBtn()}
+}
+function auditionChord(c,genre){
+  ensureCtx();stop(true);playGenre=genre;bus=newBus();
+  const t=ctx.currentTime+.03;
+  for(const m of c.notes)tone(genre,m,t,1.4,.95,c.notes.length);
+  tone('bass',c.bass,t,1.4,.95,1);
+  updatePlayBtn();
+}
+let lastShown='';
+function tick(){
+  if(!playing)return;
+  const now=ctx.currentTime;let cur=null;
+  for(let i=0;i<marks.length;i++){if(marks[i].t<=now)cur=marks[i];else break}
+  if(source==='main'&&cur){const key=cur.idx+'-'+cur.b;if(key!==lastShown){lastShown=key;showActive(cur.idx,cur.b)}}
+  if(source==='quiz'&&cur){const key='q'+cur.idx;if(key!==lastShown){lastShown=key;markQuizSlot(cur.idx)}}
+  rafId=requestAnimationFrame(tick);
+}
+
+/* ---------- staat & opslag ---------- */
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const state={genre:'jazz',prog:{jazz:0,pop:0,klassiek:0},key:0,bpm:120,loop:true,click:false,mode:'oor',sel:0,
+  score:store.get('poScore',{jazz:{oor:[0,0],theo:[0,0]},pop:{oor:[0,0],theo:[0,0]},klassiek:{oor:[0,0],theo:[0,0]}})};
+const $=id=>document.getElementById(id);
+const G=()=>GENRES[state.genre];
+const P=()=>G().progs[state.prog[state.genre]];
+let chords=[];
+
+/* ---------- klavier ---------- */
+const KB_LO=36,KB_HI=83,isBlack=m=>[1,3,6,8,10].includes(m%12);
+(function buildKb(){
+  const svg=$('kb');let x=0,whites=[],blacks=[];const W=20,H=92;
+  for(let m=KB_LO;m<=KB_HI;m++){
+    if(!isBlack(m)){whites.push(`<rect class="w" data-m="${m}" x="${x+.5}" y=".5" width="${W-1}" height="${H}" rx="2"/>`+(m%12===0?`<text x="${x+W/2}" y="${H-6}" text-anchor="middle">C${Math.floor(m/12)-1}</text>`:''));x+=W}
+    else blacks.push(`<rect class="b" data-m="${m}" x="${x-6}" y=".5" width="12" height="56" rx="1.5"/>`);
+  }
+  svg.setAttribute('viewBox',`0 0 ${x+1} ${H+2}`);svg.innerHTML=whites.join('')+blacks.join('');
+})();
+function showKeys(c){
+  document.querySelectorAll('#kb rect').forEach(r=>r.classList.remove('up','lo'));
+  if(!c)return;
+  c.notes.forEach(m=>document.querySelector(`#kb rect[data-m="${m}"]`)?.classList.add('up'));
+  document.querySelector(`#kb rect[data-m="${c.bass}"]`)?.classList.add('lo');
+}
+
+/* ---------- render speler ---------- */
+function renderGenre(){
+  document.body.dataset.genre=state.genre;
+  if(THEME_META)THEME_META.content=getComputedStyle(document.body).getPropertyValue('--acc').trim()||THEME_META.content;
+  document.querySelectorAll('.genres button').forEach(b=>b.setAttribute('aria-selected',b.dataset.g===state.genre));
+  $('blurb').textContent=t('b_'+state.genre);
+  $('progs').innerHTML=`<p class="lab">${t('progs')}</p>`+G().progs.map((p,i)=>`<button class="prog" type="button" data-i="${i}" aria-current="${i===state.prog[state.genre]}"><span class="n">${PN(p)}</span><span class="r">${p.ch.map(c=>c.rn).filter((v,j,a)=>p.ch.length<9||j<6).join(' – ')}${p.ch.length>=9?' …':''}</span></button>`).join('');
+  renderProg();renderQuiz();renderScore();
+}
+function renderProg(){
+  const p=P();
+  document.querySelectorAll('.prog').forEach(b=>b.setAttribute('aria-current',+b.dataset.i===state.prog[state.genre]));
+  const ks=$('keySel');const names=p.minor?MIN_NAMES:MAJ_NAMES;
+  ks.innerHTML=names.map((n,i)=>`<option value="${i}">${n}${p.minor?'m':''}</option>`).join('');ks.value=state.key;
+  chords=realize(p,state.key);
+  $('pKey').textContent=keyLabel(state.key,p.minor)+' · '+t('bars',chords.reduce((a,c)=>a+c.beats,0)/4);
+  $('pName').textContent=PN(p);$('pDesc').textContent=PD(p);
+  $('pListen').innerHTML=PL(p)?`${t('listen')} <b>${PL(p)}</b>`:'';
+  $('chords').innerHTML=chords.map((c,i)=>`<button class="card" type="button" data-i="${i}"><span class="s">${c.name}</span><span class="rn">${c.rn}</span><span class="dots">${'<i></i>'.repeat(Math.min(c.beats,8))}</span></button>`).join('');
+  state.sel=0;showActive(-1,-1);
+}
+function showActive(idx,b){
+  document.querySelectorAll('#chords .card').forEach((el,i)=>{
+    el.classList.toggle('on',i===idx);
+    el.querySelectorAll('.dots i').forEach((d,j)=>d.classList.toggle('hit',i===idx&&j<=b));
+  });
+  const i=idx<0?state.sel:idx,c=chords[i],n=chords[(i+1)%chords.length];
+  $('nowSym').textContent=c?c.name:'–';$('nowRn').textContent=c?c.rn:'';
+  $('nxSym').textContent=n?n.name:'–';$('nxRn').textContent=n?n.rn:'';
+  showKeys(c);
+}
+function updatePlayBtn(){
+  const on=playing&&source==='main';
+  $('playBtn').innerHTML=on?'<svg viewBox="0 0 14 14"><rect x="2" y="2" width="10" height="10" rx="1"/></svg>'+t('stop'):'<svg viewBox="0 0 14 14"><path d="M3 1.5v11l9.5-5.5z"/></svg>'+t('play');
+}
+function restartIfPlaying(){if(playing&&source==='main')startPlayback(chords,state.genre,'main')}
+
+/* ---------- oefenen ---------- */
+let quiz=null,round=null;
+const ROUND=10;
+function startRound(){round={mode:state.mode,g:state.genre,n:0,used:[],results:[]};newQuiz()}
+function nextLabel(){return round&&round.results.length>=ROUND?t('seeRes'):t('nextQ')}
+function goNext(){
+  if(round&&round.results.length>=ROUND){stop();quiz={summary:true,mode:state.mode,g:state.genre};renderQuiz();$('quiz').scrollIntoView({block:'nearest',behavior:'smooth'});return}
+  newQuiz();
+}
+function progHtml(){
+  if(!round)return '';
+  const done=round.results.length;
+  return `<div class="rprog"><span>${t('qOf',round.n,ROUND)}</span><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${ROUND}" aria-valuenow="${done}">${Array.from({length:ROUND},(_,i)=>`<i class="${i<done?(round.results[i].ok?'ok':round.results[i].skipped?'sk':'no'):(i===done?'cur':'')}"></i>`).join('')}</div></div>`;
+}
+function revealQ(){
+  if(!quiz||quiz.summary||!round||quiz.revealed)return;
+  if(quiz.mode==='dic'?quiz.checked:quiz.answered!=null)return;
+  const p=G().progs[quiz.pi];
+  round.results.push({pi:quiz.pi,k:quiz.key,ok:false,skipped:true,good:0,tot:quiz.ch.length});
+  quiz.revealed=true;
+  if(quiz.mode==='dic')quiz.checked=true;
+  else quiz.answered=quiz.mode==='oor'?quiz.pi:quiz.right;
+  if(source==='quiz')stop();
+  renderQuiz();
+}
+function skipQ(){
+  if(!quiz||quiz.summary||!round)return;
+  const p=G().progs[quiz.pi];
+  round.results.push({pi:quiz.pi,k:quiz.key,ok:false,skipped:true,good:0,tot:quiz.ch.length});
+  stop();goNext();
+}
+function practice(pi,key){
+  stop();state.prog[state.genre]=pi;state.key=key;renderProg();
+  const list=$('progs'),act=list.querySelector('.prog[aria-current="true"]');
+  if(act&&list.scrollWidth>list.clientWidth)list.scrollLeft=act.offsetLeft-list.offsetLeft-list.clientWidth/2+act.offsetWidth/2;
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelector('.player').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+  startPlayback(chords,state.genre,'main');
+}
+function renderSummary(el){
+  const r=round,ok=r.results.filter(x=>x.ok).length,isDic=r.mode==='dic',nSk=r.results.filter(x=>x.skipped).length;
+  const cg=r.results.reduce((a,x)=>a+(x.good||0),0),ct=r.results.reduce((a,x)=>a+(x.tot||0),0);
+  const msg=t(ok===ROUND?'msg10':ok>=8?'msg8':ok>=5?'msg5':'msg0');
+  el.innerHTML=`<div class="sum">
+    <span class="plab">${t('resLbl',GL(),t('mode_'+r.mode))}</span>
+    <p class="big">${t('bigScore',ok,ROUND)}</p>
+    <p class="qsub">${msg}${nSk?t('skippedN',nSk):''}${isDic?t('dicTotal',cg,ct):''}</p>
+    <ol class="rlist">${r.results.map((x,i)=>{const xp=G().progs[x.pi],nm=PN(xp);return `<li class="${x.ok?'ok':x.skipped?'sk':'no'}"><span class="mk" aria-label="${t(x.ok?'a_ok':x.skipped?'a_sk':'a_no')}">${x.ok?'✓':x.skipped?'–':'✗'}</span><span class="nm">${i+1}. ${nm}</span><span class="k">${keyLabel(x.k,xp.minor)}${x.skipped?t('skippedTag'):isDic?` · ${x.good}/${x.tot}`:''}</span><button class="ghost sm" type="button" data-practice="${x.pi}" data-key="${x.k}" aria-label="${t('pracN',nm)}">${t('prac')}</button></li>`}).join('')}</ol>
+    <div class="qact"><button class="play" id="qRestart" type="button">${t('newRound')}</button></div>
+  </div>`;
+  $('qRestart').onclick=startRound;
+}
+const QORDER=['maj','min','dom7','maj7','min7','m7b5','dim','dim7','min6','dom7b9','mmaj7'];
+const QLAB={maj:'',min:'m',dom7:'7',maj7:'maj7',min7:'m7',m7b5:'m7♭5',dim:'°',dim7:'°7',min6:'m6',dom7b9:'7♭9',mmaj7:'m(maj7)'};
+function genreQuals(){const s=new Set();G().progs.forEach(p=>p.ch.forEach(c=>s.add(c.q)));return QORDER.filter(q=>s.has(q))}
+function markQuizSlot(i){document.querySelectorAll('#quiz .slot').forEach((s,j)=>s.classList.toggle('hear',j===i))}
+function dicPlay(){startPlayback(quiz.ch,state.genre,'quiz')}
+const rnd=n=>Math.floor(Math.random()*n);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+function newQuiz(){
+  const g=G(),key=rnd(12);
+  let pool=g.progs.map((_,i)=>i).filter(i=>state.mode!=='dic'||g.progs[i].ch.length<=8);
+  const fresh=pool.filter(i=>!round.used.includes(i));if(fresh.length)pool=fresh;
+  const pi=pool[rnd(pool.length)],p=g.progs[pi],ch=realize(p,key);
+  round.used.push(pi);round.n++;
+  if(state.mode==='dic'){
+    quiz={mode:'dic',pi,key,ch,gs:ch.map(()=>({r:null,q:null})),act:0,checked:false,g:state.genre};
+    renderQuiz();dicPlay();return;
+  }
+  if(state.mode==='oor'){
+    const others=shuffle(g.progs.map((_,i)=>i).filter(i=>i!==pi)).slice(0,3);
+    quiz={mode:'oor',pi,key,ch,opts:shuffle([pi,...others]),answered:null};
+  }else{
+    const slot=rnd(ch.length);
+    const c=ch[slot],right=c.name;
+    const fl=keyFlat(key,p.minor),names=fl?FLAT:SHARP,suf=c.name.slice(rootName(c,key,p.minor).length);
+    const pool=new Set();
+    for(const d of [1,2,5,7,10,11,3,4,8,9]){pool.add(names[(c.root+d)%12]+suf)}
+    const alt={'':'m','m':'','7':'maj7','maj7':'7','m7':'7','°':'m','m7♭5':'m7','°7':'7','m6':'m7','7♭9':'maj7','m(maj7)':'m7'};
+    if(c.bass==null&&alt[SUF[c.q]]!=null)pool.add(names[c.root]+alt[SUF[c.q]]);
+    pool.delete(right);
+    const wrong=shuffle([...pool]).slice(0,3);
+    quiz={mode:'theo',pi,key,ch,slot,opts:shuffle([right,...wrong]),right,answered:null};
+  }
+  quiz.g=state.genre;
+  renderQuiz();
+  if(quiz.mode==='oor')startPlayback(quiz.ch,state.genre,'quiz');
+}
+function renderQuiz(){
+  const el=$('quiz');
+  document.querySelectorAll('.modes button').forEach(b=>b.setAttribute('aria-selected',b.dataset.m===state.mode));
+  {
+    if(!quiz||quiz.mode!==state.mode||quiz.g!==state.genre){
+      el.innerHTML=state.mode==='oor'
+        ?`<p class="qtext">${t('q_oor')}</p><p class="qsub">${t('intro_oor',GLl())}</p><div class="qact"><button class="play" id="qStart" type="button"><svg viewBox="0 0 14 14"><path d="M3 1.5v11l9.5-5.5z"/></svg>${t('start')}</button></div>`
+        :state.mode==='dic'
+        ?`<p class="qtext">${t('q_dic0')}</p><p class="qsub">${t('intro_dic',GLl())}</p><div class="qact"><button class="play" id="qStart" type="button"><svg viewBox="0 0 14 14"><path d="M3 1.5v11l9.5-5.5z"/></svg>${t('start')}</button></div>`
+        :`<p class="qtext">${t('q_theo0')}</p><p class="qsub">${t('intro_theo')}</p><div class="qact"><button class="play" id="qStart" type="button">${t('start')}</button></div>`;
+      $('qStart').onclick=startRound;
+      quiz=null;return;
+    }
+  }
+  if(quiz.summary){renderSummary(el);return}
+  const p=G().progs[quiz.pi],a=quiz.answered;
+  if(quiz.mode==='dic'){renderDic(el,p);return}
+  if(quiz.mode==='oor'){
+    el.innerHTML=progHtml()+`<p class="qtext">${t('q_oor')}</p><p class="qsub">${a==null?t('listenAny'):t('keyIs',keyLabel(quiz.key,p.minor))}</p>
+    <div class="opts">${quiz.opts.map(i=>{const q=G().progs[i];let cls='';if(a!=null){if(i===quiz.pi)cls='ok';else if(i===a)cls='no'}
+      return `<button class="opt ${cls}" type="button" data-a="${i}" ${a!=null?'disabled':''}>${PN(q)}<small>${q.ch.slice(0,6).map(c=>c.rn).join(' – ')}${q.ch.length>6?' …':''}</small></button>`}).join('')}</div>
+    ${a!=null?`<p class="reveal">${t('chordsLbl')} ${quiz.ch.map(c=>`<span>${c.name}</span>`).join(' · ')}</p>`:''}
+    <div class="qact"><button class="ghost" id="qAgain" type="button">${t('again')}</button>${a==null?`<button class="ghost" id="qReveal" type="button">${t('reveal')}</button><button class="ghost" id="qSkip" type="button">${t('skip')}</button>`:''}${a!=null?`${quiz.revealed?`<span class="fb rv">${t('revealed')}</span>`:`<span class="fb ${a===quiz.pi?'ok':'no'}">${a===quiz.pi?t('correct'):t('wasProg',PN(p))}</span>`}<button class="ghost" type="button" data-practice="${quiz.pi}" data-key="${quiz.key}">${t('practiceThis')}</button><button class="play" id="qNext" type="button">${nextLabel()}</button>`:''}</div>`;
+    $('qAgain').onclick=()=>startPlayback(quiz.ch,state.genre,'quiz');
+  }else{
+    el.innerHTML=progHtml()+`<p class="qtext">${PN(p)} · ${keyLabel(quiz.key,p.minor)}</p><p class="qsub">${t('whichSlot')}</p>
+    <div class="qrow">${quiz.ch.map((c,i)=>`<div class="slot ${i===quiz.slot?'ask':''}"><span class="s">${i===quiz.slot&&a==null?'?':c.name}</span><span class="rn">${c.rn}</span></div>`).join('')}</div>
+    <div class="opts">${quiz.opts.map(o=>{let cls='';if(a!=null){if(o===quiz.right)cls='ok';else if(o===a)cls='no'}
+      return `<button class="opt ch ${cls}" type="button" data-a="${o}" ${a!=null?'disabled':''}>${o}</button>`}).join('')}</div>
+    <div class="qact">${a==null?`<button class="ghost" id="qReveal" type="button">${t('reveal')}</button><button class="ghost" id="qSkip" type="button">${t('skip')}</button>`:''}${a!=null?`${quiz.revealed?`<span class="fb rv">${t('revealed')}</span>`:`<span class="fb ${a===quiz.right?'ok':'no'}">${a===quiz.right?t('correct'):t('rightChord',quiz.right)}</span>`}<button class="ghost" id="qHear" type="button">${t('hearProg')}</button><button class="ghost" type="button" data-practice="${quiz.pi}" data-key="${quiz.key}">${t('practiceThis')}</button><button class="play" id="qNext" type="button">${nextLabel()}</button>`:''}</div>`;
+    if(a!=null)$('qHear').onclick=()=>startPlayback(quiz.ch,state.genre,'quiz');
+  }
+  el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(b.dataset.a));
+  if($('qNext'))$('qNext').onclick=goNext;
+}
+function renderDic(el,p){
+  const names=keyFlat(quiz.key,p.minor)?FLAT:SHARP,quals=genreQuals(),done=quiz.checked;
+  const cur=quiz.gs[quiz.act],full=quiz.gs.every(x=>x.r!=null&&x.q),curFull=cur.r!=null&&cur.q;
+  const nOk=quiz.ch.filter((c,i)=>quiz.gs[i].r===c.root&&quiz.gs[i].q===c.q).length;
+  el.innerHTML=progHtml()+`<p class="qtext">${t('dicTitle',keyLabel(quiz.key,p.minor))}</p>
+  <p class="qsub">${done?t('dicDone',PN(p)):t('dicHelp')}</p>
+  <div class="qrow">${quiz.ch.map((c,i)=>{
+    const g=quiz.gs[i],nm=done&&quiz.revealed?'':g.r!=null&&g.q?names[g.r]+SUF[g.q]:(g.r!=null?names[g.r]+'…':'?');
+    let cls='slot',extra='';
+    if(done&&quiz.revealed){cls+=' rev';extra=`<span class="fix">${c.name}</span>`}
+    else if(done){const ok=g.r===c.root&&g.q===c.q;cls+=ok?' ok':' no';if(!ok)extra=`<span class="fix">${c.name}</span>`}
+    else if(i===quiz.act)cls+=' ask';
+    return `<button type="button" class="${cls}" data-s="${i}" aria-label="${t('chordN',i+1)}"><span class="s">${nm}</span>${extra}<span class="rn">${done||state.showRn?c.rn:(i+1)+'.'}</span></button>`}).join('')}</div>
+  ${done?'':`<div class="pickers">
+    <div><span class="plab">${t('rootOf',quiz.act+1)}</span><div class="roots">${names.map((n,i)=>`<button type="button" class="pk ${cur.r===i?'sel':''}" data-r="${i}">${n}</button>`).join('')}</div></div>
+    <div><span class="plab">${t('type')}</span><div class="quals">${quals.map(q=>`<button type="button" class="pk ${cur.q===q?'sel':''}" data-q="${q}">${q==='maj'?t('major'):QLAB[q]}</button>`).join('')}</div></div>
+  </div>`}
+  <div class="qact">
+    <button class="ghost" id="dAll" type="button">${t('hearAll')}</button>
+    ${done?`${quiz.revealed?`<span class="fb rv">${t('revealed')}</span>`:`<span class="fb ${nOk===quiz.ch.length?'ok':'no'}">${t('nOfGood',nOk,quiz.ch.length)}${nOk===quiz.ch.length?'!':''}</span>`}<button class="ghost" type="button" data-practice="${quiz.pi}" data-key="${quiz.key}">${t('practiceThis')}</button><button class="play" id="qNext" type="button">${nextLabel()}</button>`
+    :`<button class="ghost" id="dOne" type="button">${t('hearN',quiz.act+1)}</button>
+      <button class="ghost" id="dMine" type="button" ${curFull?'':'disabled'}>${t('playMine')}</button>
+      <label class="tog"><input type="checkbox" id="dRn" ${state.showRn?'checked':''}> ${t('showRn')}</label>
+      <button class="ghost" id="qReveal" type="button">${t('reveal')}</button>
+      <button class="ghost" id="qSkip" type="button">${t('skip')}</button>
+      <button class="play" id="dCheck" type="button" ${full?'':'disabled'}>${t('check')}</button>`}
+  </div>`;
+  $('dAll').onclick=dicPlay;
+  el.querySelectorAll('.slot').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.s;
+    if(done){auditionChord(quiz.ch[i],state.genre);return}
+    quiz.act=i;renderQuiz();
+  });
+  if(done){$('qNext').onclick=goNext;return}
+  const advance=()=>{
+    const g=quiz.gs[quiz.act];if(g.r==null||!g.q)return;
+    const n=quiz.gs.length;
+    for(let k=1;k<=n;k++){const j=(quiz.act+k)%n;if(quiz.gs[j].r==null||!quiz.gs[j].q){quiz.act=j;return}}
+  };
+  el.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{cur.r=+b.dataset.r;advance();renderQuiz()});
+  el.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{cur.q=b.dataset.q;advance();renderQuiz()});
+  $('dOne').onclick=()=>auditionChord(quiz.ch[quiz.act],state.genre);
+  $('dMine').onclick=()=>{if(!curFull)return;auditionChord({notes:voice(cur.r,Q[cur.q],null),bass:40+((cur.r-4+12)%12)},state.genre)};
+  $('dRn').onchange=e=>{state.showRn=e.target.checked;renderQuiz()};
+  $('dCheck').onclick=()=>{
+    if(!full)return;stop();quiz.checked=true;
+    const ok=quiz.ch.filter((c,i)=>quiz.gs[i].r===c.root&&quiz.gs[i].q===c.q).length;
+    round.results.push({pi:quiz.pi,k:quiz.key,ok:ok===quiz.ch.length,good:ok,tot:quiz.ch.length});
+    const s=scoreOf(state.genre,'dic');s[0]+=ok;s[1]+=quiz.ch.length;store.set('poScore',state.score);
+    renderQuiz();renderScore();
+  };
+}
+function scoreOf(g,m){const sg=state.score[g]||(state.score[g]={});return sg[m]||(sg[m]=[0,0])}
+function answer(v){
+  if(!quiz||quiz.answered!=null)return;
+  const val=quiz.mode==='oor'?+v:v;quiz.answered=val;
+  const ok=quiz.mode==='oor'?val===quiz.pi:val===quiz.right;
+  round.results.push({pi:quiz.pi,k:quiz.key,ok});
+  const s=scoreOf(state.genre,quiz.mode);s[1]++;if(ok)s[0]++;store.set('poScore',state.score);
+  if(quiz.mode==='theo')auditionChord(quiz.ch[quiz.slot],state.genre);
+  renderQuiz();renderScore();
+}
+function renderScore(){
+  const s=scoreOf(state.genre,state.mode);
+  $('score').innerHTML=s[1]?t('scoreLine',GL(),t('mode_'+state.mode),s[0],s[1],state.mode==='dic'):t('noScore',GLl());
+}
+
+/* ---------- events ---------- */
+document.querySelectorAll('.genres button').forEach(b=>b.onclick=()=>{location.hash=b.dataset.g});
+$('quiz').addEventListener('click',e=>{
+  if(e.target.closest('#qSkip')){skipQ();return}
+  if(e.target.closest('#qReveal')){revealQ();return}
+  const b=e.target.closest('[data-practice]');if(!b)return;
+  practice(+b.dataset.practice,+b.dataset.key);
+});
+$('progs').addEventListener('click',e=>{
+  const b=e.target.closest('.prog');if(!b)return;
+  state.prog[state.genre]=+b.dataset.i;
+  const p=P();if(p.key!=null)state.key=p.key;
+  renderProg();restartIfPlaying();
+});
+$('chords').addEventListener('click',e=>{
+  const b=e.target.closest('.card');if(!b)return;
+  state.sel=+b.dataset.i;auditionChord(chords[state.sel],state.genre);showActive(-1,-1);
+  document.querySelectorAll('#chords .card').forEach((el,i)=>el.classList.toggle('on',i===state.sel));
+});
+$('playBtn').onclick=()=>{if(playing&&source==='main')stop();else startPlayback(chords,state.genre,'main')};
+$('keySel').onchange=e=>{state.key=+e.target.value;renderProg();restartIfPlaying()};
+$('rndKey').onclick=()=>{let k;do{k=rnd(12)}while(k===state.key);state.key=k;renderProg();restartIfPlaying()};
+$('bpm').oninput=e=>{state.bpm=+e.target.value;$('bpmVal').textContent=state.bpm};
+$('bpm').onchange=()=>restartIfPlaying();
+$('loop').onchange=e=>{state.loop=e.target.checked};
+$('click').onchange=e=>{state.click=e.target.checked};
+document.querySelectorAll('.modes button').forEach(b=>b.onclick=()=>{state.mode=b.dataset.m;quiz=null;if(source==='quiz')stop();renderQuiz();renderScore()});
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&e.target===document.body){e.preventDefault();$('playBtn').click()}});
+
+function route(){
+  const h=location.hash.slice(1);const g=GENRES[h]?h:'jazz';
+  if(g!==state.genre||!document.body.dataset.genre){
+    stop();state.genre=g;quiz=null;
+    const p=P();state.key=p.key!=null?p.key:0;
+    state.bpm=G().bpm;$('bpm').value=state.bpm;$('bpmVal').textContent=state.bpm;
+    renderGenre();updatePlayBtn();
+  }
+}
+function applyStatic(){
+  document.documentElement.lang=LANG;document.title=t('title');
+  document.querySelectorAll('[data-i18n]').forEach(e=>e.textContent=t(e.dataset.i18n));
+  document.querySelectorAll('[data-i18n-html]').forEach(e=>e.innerHTML=t(e.dataset.i18nHtml));
+  document.querySelectorAll('[data-i18n-aria]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.i18nAria)));
+  document.querySelectorAll('.langs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===LANG));
+}
+function setLang(l){
+  if(l===LANG)return;LANG=l;try{localStorage.setItem(LANG_KEY,l)}catch(e){}
+  applyStatic();renderGenre();updatePlayBtn();
+}
+document.querySelectorAll('.langs button').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+function toast(msg,btn,fn){$('toastMsg').textContent=msg;$('toastBtn').textContent=btn;$('toastBtn').onclick=fn;$('toast').hidden=false}
+let deferredInstall=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;$('installBtn').hidden=false});
+window.addEventListener('appinstalled',()=>{deferredInstall=null;$('installBtn').hidden=true});
+$('installBtn').onclick=async()=>{if(!deferredInstall)return;deferredInstall.prompt();try{await deferredInstall.userChoice}catch(e){}deferredInstall=null;$('installBtn').hidden=true};
+if('serviceWorker' in navigator&&window.APP_SW){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register(window.APP_SW).then(reg=>{
+      const ask=w=>toast(t('update'),t('reload'),()=>{w.postMessage('skipWaiting')});
+      if(reg.waiting&&navigator.serviceWorker.controller)ask(reg.waiting);
+      reg.addEventListener('updatefound',()=>{const w=reg.installing;w&&w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)ask(w)})});
+    }).catch(()=>{});
+    let reloaded=false;const hadCtrl=!!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloaded||!hadCtrl)return;reloaded=true;location.reload()});
+  });
+}
+const THEME_META=document.querySelector('meta[name="theme-color"]');
+window.addEventListener('hashchange',route);
+applyStatic();state.genre='';route();
+</script>
+
+</body>
+</html>
